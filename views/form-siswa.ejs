@@ -1,0 +1,144 @@
+<%- include('partials/navbar') %>
+
+  <div class="min-h-screen w-auto bg-slate-200 pt-24 px-16">
+    <div class="bg-white w-full rounded-lg shadow-md p-6">
+      <h1 class="text-2xl font-bold mb-4">
+        <%= siswa ? "Edit Siswa" : "Tambah Siswa" %>
+      </h1>
+
+      <form action="/dashboard/<%= action %>" method="POST" class="space-y-4">
+        <div>
+          <label class="block font-semibold">No Induk (NIS)</label>
+          <input type="text" name="no_induk" value="<%= siswa ? siswa.no_induk : "" %>" required
+            class="border rounded w-full p-2">
+        </div>
+
+        <div>
+          <label class="block font-semibold">Nama</label>
+          <input type="text" name="nama" value="<%= siswa ? siswa.nama : "" %>" required
+            class="border rounded w-full p-2">
+        </div>
+
+        <div>
+          <label class="block font-semibold">Tempat Lahir</label>
+          <input type="text" name="tempat_lahir" value="<%= siswa ? siswa.tempat_lahir : "" %>"
+            class="border rounded w-full p-2">
+        </div>
+
+        <div>
+          <label class="block font-semibold">Tanggal Lahir</label>
+          <input type="date" name="tanggal_lahir"
+            value="<%= siswa && siswa.tanggal_lahir ? siswa.tanggal_lahir.toISOString().slice(0,10) : "" %>"
+            class="border rounded w-full p-2">
+        </div>
+
+        <div>
+          <label class="block font-semibold">Kelas</label>
+          <input type="text" name="kelas" value="<%= siswa ? siswa.kelas : "" %>" required
+            class="border rounded w-full p-2">
+        </div>
+
+        <div>
+          <label class="block font-semibold">RFID UID</label>
+          <div class="flex gap-2">
+            <input id="rfid_uid" type="text" name="rfid_uid" value="<%= siswa ? siswa.rfid_uid : "" %>" required
+              class="border rounded w-full p-2">
+            <% if (!siswa) { %>
+              <button type="button" id="scan-btn" class="bg-blue-600 text-white px-3 rounded">
+                Scan
+              </button>
+              <% } %>
+          </div>
+          <p id="scan-status" class="text-sm text-gray-500 mt-1"></p>
+        </div>
+
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">
+          <%= siswa ? "Update" : "Simpan" %>
+        </button>
+        <a href="/dashboard/siswa" class="ml-2 text-gray-600">Batal</a>
+      </form>
+    </div>
+  </div>
+
+  <script type="">
+  const scanBtn = document.getElementById("scan-btn");
+  const rfidInput = document.getElementById("rfid_uid");
+  const statusText = document.getElementById("scan-status");
+
+  <% if (!siswa) { %>
+  window.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await fetch("/api/mode/register/on", { method: "POST" });
+      console.log("REGISTER_MODE ON");
+    } catch (err) {
+      console.error("Gagal mengaktifkan mode register:", err);
+    }
+  });
+
+  window.addEventListener("beforeunload", async () => {
+    try {
+      await fetch("/api/mode/register/off", { method: "POST" });
+      console.log("REGISTER_MODE OFF");
+    } catch (err) {
+      console.error("Gagal mematikan mode register:", err);
+    }
+  });
+
+  // 🌐 Realtime listener via WebSocket
+  const wsProtocol = location.protocol === "https:" ? "wss" : "ws";
+  const ws = new WebSocket(`${wsProtocol}://${location.host}`);
+
+  ws.addEventListener("open", () => {
+    console.log("✅ WebSocket connected");
+    statusText.textContent = "Menunggu scan kartu RFID...";
+    statusText.classList.add("text-blue-500");
+  });
+
+  ws.addEventListener("message", (event) => {
+    console.log("📩 WS message:", event.data);
+    try {
+      const data = JSON.parse(event.data);
+      if ((data.type === "rfid-scan" || data.type === "register-scan") && data.uid) {
+        rfidInput.value = data.uid;
+        statusText.textContent = "UID diterima otomatis ✅";
+        statusText.classList.remove("text-blue-500", "text-red-600");
+        statusText.classList.add("text-green-600");
+      }
+    } catch (err) {
+      console.error("Gagal parsing pesan WS:", err);
+    }
+  });
+
+  ws.addEventListener("close", () => {
+    console.log("❌ WebSocket disconnected");
+    statusText.textContent = "Koneksi WebSocket terputus ❌";
+    statusText.classList.remove("text-blue-500");
+    statusText.classList.add("text-red-600");
+  });
+  <% } %>
+
+  // 🔍 Fallback tombol manual
+  if (scanBtn) {
+    scanBtn.addEventListener("click", async () => {
+      statusText.textContent = "Menunggu scan kartu RFID...";
+      statusText.classList.add("text-blue-500");
+
+      try {
+        const res = await fetch("/api/latest-scan");
+        const data = await res.json();
+
+        if (data && data.uid) {
+          rfidInput.value = data.uid;
+          statusText.textContent = "UID berhasil dimasukkan otomatis ✅";
+          statusText.classList.replace("text-blue-500", "text-green-600");
+        } else {
+          statusText.textContent = "Belum ada scan RFID terbaru.";
+          statusText.classList.replace("text-blue-500", "text-red-600");
+        }
+      } catch (err) {
+        statusText.textContent = "Gagal mengambil data scan.";
+        statusText.classList.replace("text-blue-500", "text-red-600");
+      }
+    });
+  }
+</script>

@@ -1,0 +1,37 @@
+<%- include('partials/navbar') %>
+
+    <div class="min-h-screen w-auto bg-slate-200 pt-24 px-16">
+        <div class="bg-white w-full rounded-lg shadow-md p-6">
+            <h1 class="text-2xl font-bold mb-4">Detail Siswa</h1>
+            <div class="bg-gray-100 p-4 rounded">
+                <p><strong>No Induk:</strong>
+                    <%= siswa.no_induk %>
+                </p>
+                <p><strong>Nama:</strong>
+                    <%= siswa.nama %>
+                </p>
+                <p><strong>Tempat Lahir:</strong>
+                    <%= siswa.tempat_lahir %>
+                </p>
+                <p><strong>Tanggal Lahir:</strong>
+                    <%= siswa.tanggal_lahir ? siswa.tanggal_lahir.toISOString().slice(0,10) : "-" %>
+                </p>
+                <p><strong>Kelas:</strong>
+                    <%= siswa.kelas %>
+                </p>
+                <p><strong>RFID UID:</strong>
+                    <%= siswa.rfid_uid %>
+                </p>
+                <p><strong>Dibuat:</strong>
+                    <%= siswa.createdAt.toLocaleString() %>
+                </p>
+                <p><strong>Update Terakhir:</strong>
+                    <%= siswa.updatedAt.toLocaleString() %>
+                </p>
+            </div>
+            <div class="mt-4">
+                <a href="/dashboard/siswa/<%= siswa.id %>/edit" class="bg-yellow-500 text-white px-3 py-1 rounded">Edit</a>
+                <a href="/dashboard/siswa" class="ml-2 text-gray-600">Kembali</a>
+            </div>
+        </div>
+    </div>

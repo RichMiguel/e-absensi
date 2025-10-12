@@ -1,0 +1,123 @@
+<%- include('partials/navbar') %>
+
+  <div class="min-h-screen w-auto bg-slate-200 pt-24 px-16">
+    <div class="bg-white w-full rounded-lg shadow-md p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">REKAPITULASI</h1>
+        <form action="/dashboard/rekapitulasi/download" method="GET" id="downloadForm">
+          <input type="hidden" name="kelas" id="kelasHidden">
+          <input type="hidden" name="bulan" id="bulanHidden">
+          <input type="hidden" name="tahun" id="tahunHidden">
+
+          <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+            Download PDF
+          </button>
+        </form>
+      </div>
+
+      <!-- Filter -->
+      <form method="GET" action="/dashboard/rekapitulasi" class="flex flex-col md:flex-row gap-4 mb-6">
+        <select name="kelas" id="kelasFilter" class="border rounded-lg px-3 py-2 w-full md:w-48">
+          <option value="">Semua Kelas</option>
+          <option value="X IPA 1" <%=filter.kelas==="X IPA 1" ? "selected" : "" %>>X IPA 1</option>
+          <option value="X IPA 2" <%=filter.kelas==="X IPA 2" ? "selected" : "" %>>X IPA 2</option>
+          <option value="XI IPA 1" <%=filter.kelas==="XI IPA 1" ? "selected" : "" %>>XI IPA 1</option>
+          <option value="XI IPA 2" <%=filter.kelas==="XI IPA 2" ? "selected" : "" %>>XI IPA 2</option>
+          <option value="XII IPA 1" <%=filter.kelas==="XII IPA 1" ? "selected" : "" %>>XII IPA 1</option>
+          <option value="XII IPA 2" <%=filter.kelas==="XII IPA 2" ? "selected" : "" %>>XII IPA 2</option>
+        </select>
+
+        <select name="bulan" id="bulanFilter" class="border rounded-lg px-3 py-2 w-full md:w-40">
+          <option value="">Semua Bulan</option>
+          <% for(let i=1;i<=12;i++){ %>
+            <option value="<%= i %>" <%=filter.bulan==i ? "selected" : "" %>>
+              <%= new Date(0, i-1).toLocaleString('id-ID', { month: 'long' }) %>
+            </option>
+            <% } %>
+        </select>
+
+        <select name="tahun" id="tahunFilter" class="border rounded-lg px-3 py-2 w-40">
+          <option value="">Semua Tahun</option>
+          <option value="2024" <%=filter.tahun==2024 ? "selected" : "" %>>2024</option>
+          <option value="2025" <%=filter.tahun==2025 ? "selected" : "" %>>2025</option>
+        </select>
+
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+          Terapkan
+        </button>
+      </form>
+
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-lg">
+          <thead class="bg-slate-100">
+            <tr>
+              <th class="px-4 py-2 border-b text-left">No</th>
+              <th class="px-4 py-2 border-b text-left">NIS</th>
+              <th class="px-4 py-2 border-b text-left">Nama</th>
+              <th class="px-4 py-2 border-b text-left">Kelas</th>
+              <th class="px-4 py-2 border-b text-left">Hadir</th>
+              <th class="px-4 py-2 border-b text-left">Tepat Waktu</th>
+              <th class="px-4 py-2 border-b text-left">Terlambat</th>
+              <th class="px-4 py-2 border-b text-left">Tidak Hadir</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y">
+            <% if(rekap.length===0){ %>
+              <tr>
+                <td colspan="8" class="text-center py-4 text-gray-500">Tidak ada data</td>
+              </tr>
+              <% } else { %>
+                <% rekap.forEach(r=> { %>
+                  <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-2">
+                      <%= r.no %>
+                    </td>
+                    <td class="px-4 py-2">
+                      <%= r.nis %>
+                    </td>
+                    <td class="px-4 py-2">
+                      <%= r.nama %>
+                    </td>
+                    <td class="px-4 py-2">
+                      <%= r.kelas %>
+                    </td>
+                    <td class="px-4 py-2 font-semibold text-green-600">
+                      <%= r.hadir %>
+                    </td>
+                    <td class="px-4 py-2 font-semibold text-blue-600">
+                      <%= r.tepat %>
+                    </td>
+                    <td class="px-4 py-2 font-semibold text-yellow-600">
+                      <%= r.terlambat %>
+                    </td>
+                    <td class="px-4 py-2 font-semibold text-red-600">
+                      <%= r.tidakHadir %>
+                    </td>
+                  </tr>
+                  <% }) %>
+                    <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      // Ambil elemen filter
+      const kelasFilter = document.getElementById("kelasFilter");
+      const bulanFilter = document.getElementById("bulanFilter");
+      const tahunFilter = document.getElementById("tahunFilter");
+
+      // Ambil elemen hidden input di form download
+      const kelasHidden = document.getElementById("kelasHidden");
+      const bulanHidden = document.getElementById("bulanHidden");
+      const tahunHidden = document.getElementById("tahunHidden");
+
+      // Saat tombol download diklik, isi value hidden sesuai filter aktif
+      document.getElementById("downloadForm").addEventListener("submit", () => {
+        kelasHidden.value = kelasFilter.value;
+        bulanHidden.value = bulanFilter.value;
+        tahunHidden.value = tahunFilter.value;
+      });
+    </script>
+  </div>

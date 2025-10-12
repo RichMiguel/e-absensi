@@ -1,0 +1,25 @@
+<div class="w-screen h-screen flex">
+    <div class="w-[50%] h-full bg-[url('../img/login-image.jpg')] bg-cover">
+        <div class="w-full h-full bg-gray-800/60 flex flex-col justify-center items-center gap-12">
+            <img src="../img/icon-man-3.png" alt="" class="w-56 h-auto">
+            <h1 class="text-4xl text-white font-bold">MAN 3 PEKANBARU</h1>
+        </div>
+    </div>
+    <div class="w-[50%] h-full bg-white flex flex-col justify-center items-center">
+        <div class="w-full text-center mb-10">
+            <h2 class="text-2xl text-slate-900 font-bold">SELAMAT DATANG DI</h2><br>
+            <h1 class="text-5xl text-lime-500 font-bold">E-ABSENSI MAN 3 PEKANBARU</h1>
+        </div>
+
+        <form method="post" action="/auth/login" class="w-full flex flex-col items-center gap-10">
+            <input type="text" name="username" placeholder="Username" class="w-[60%] text-lg text-slate-800 rounded-lg border-2 border-slate-700 px-6 py-2" required >
+            <input type="password" name="password" placeholder="Password" class="w-[60%] text-lg text-slate-800 rounded-lg border-2 border-slate-700 px-6 py-2" required >
+            <button type="submit" class="w-[60%] text-lg bg-lime-500 text-white hover:bg-lime-700 rounded-lg font-bold px-6 py-2">MASUK</button>
+        </form>
+        
+        
+    </div>
+</div>
+
+<%- include('../partials/success-toast') %>
+<%- include('../partials/error-toast') %>

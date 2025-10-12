@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Hari {
+  SENIN
+  SELASA
+  RABU
+  KAMIS
+  JUMAT
+  SABTU
+  MINGGU
+}
+
+enum Status {
+  TEPAT_WAKTU
+  TERLAMBAT
+}
+
+model User {
+  id            Int @id @default(autoincrement())
+  username      String @unique
+  password      String
+  createdAt     DateTime  @default(now())
+}
+
+model Siswa {
+  id            Int       @id @default(autoincrement())
+  no_induk      String    @unique
+  nama          String
+  tempat_lahir  String?
+  tanggal_lahir DateTime?
+  kelas         String
+  rfid_uid      String    @unique
+
+  absensi       Absensi[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Jadwal {
+  id         Int       @id @default(autoincrement())
+  nama       String
+  hari       Hari
+  tanggal    DateTime
+  jam_masuk  String    // "HH:mm", ex: "07:15"
+  jam_pulang String?
+
+  absensi    Absensi[]
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Absensi {
+  id             Int      @id @default(autoincrement())
+  waktu_absensi  DateTime @default(now())
+  status         Status
+
+  siswa_id  Int
+  siswa     Siswa   @relation(fields: [siswa_id], references: [id])
+
+  jadwal_id Int
+  jadwal    Jadwal  @relation(fields: [jadwal_id], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
