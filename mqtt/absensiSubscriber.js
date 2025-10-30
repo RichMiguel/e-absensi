@@ -154,7 +154,7 @@ async function handleAbsensi(uid, mac) {
     }
   });
 
-  const successMsg = `Absensi ${siswa.nama} (${status})`;
+  const successMsg = `Selamat Datang, ${siswa.nama} (${status})`;
   publishMessage(successMsg);
 
   broadcastToWs({
