@@ -1,6 +1,12 @@
 import mqtt from "mqtt";
 import prisma from "../config/prismaClient.js";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("Asia/Jakarta");
 
 const BROKER_URL = process.env.MQTT_BROKER_URL || "mqtt://broker.hivemq.com:1883";
 const TOPIC_SCAN = "eabsensi_man_3/scan";
@@ -9,7 +15,6 @@ const TOPIC_MODE = "eabsensi_man_3/mode";
 
 export let wsServer = null;
 let REGISTER_MODE = false;
-
 export let latestScan = null;
 
 const client = mqtt.connect(BROKER_URL);
@@ -37,8 +42,8 @@ client.on("message", async (topic, payload) => {
     if (!uid) return;
     console.log(`[MQTT] Scan received uid=${uid} mac=${mac}`);
 
-    // simpan UID terakhir
-    latestScan = { uid, mac, time: new Date() };
+    // simpan UID terakhir dengan waktu WIB
+    latestScan = { uid, mac, time: dayjs().tz("Asia/Jakarta").toDate() };
 
     // jika sedang mode register, kirim ke WS admin dan abaikan absensi
     if (REGISTER_MODE) {
@@ -69,9 +74,9 @@ function broadcastToWs(obj) {
   });
 }
 
-// normalize date (hilangkan jam)
+// normalize date → WIB
 function normalizeDate(d) {
-  return dayjs(d).startOf("day").toDate();
+  return dayjs(d).tz("Asia/Jakarta").startOf("day").toDate();
 }
 
 // handle absensi
@@ -87,14 +92,14 @@ async function handleAbsensi(uid, mac) {
     return;
   }
 
-  // cari jadwal hari ini
-  const now = new Date();
-  const start = normalizeDate(now);
-  const end = dayjs(start).endOf("day").toDate();
+  // cari jadwal hari ini (berdasarkan WIB)
+  const now = dayjs().tz("Asia/Jakarta");
+  const start = now.startOf("day").toDate();
+  const end = now.endOf("day").toDate();
 
   const jadwalsToday = await prisma.jadwal.findMany({
     where: { tanggal: { gte: start, lte: end } },
-    orderBy: { jam_masuk: "asc" }
+    orderBy: { jam_masuk: "asc" },
   });
 
   if (!jadwalsToday.length) {
@@ -102,26 +107,26 @@ async function handleAbsensi(uid, mac) {
     return;
   }
 
-  // pilih jadwal paling dekat dengan waktu sekarang
+  // fungsi bantu konversi "HH:mm" → Date WIB
   function parseTimeToDate(baseDate, hhmm) {
     const [hh, mm] = hhmm.split(":").map(Number);
-    const d = new Date(baseDate);
-    d.setHours(hh, mm, 0, 0);
-    return d;
+    const d = dayjs(baseDate).tz("Asia/Jakarta").hour(hh).minute(mm).second(0).millisecond(0);
+    return d.toDate();
   }
 
+  // cari jadwal terdekat
   let best = null;
   let bestDiff = Number.POSITIVE_INFINITY;
   for (const j of jadwalsToday) {
     const jm = parseTimeToDate(now, j.jam_masuk);
-    const diff = Math.abs(now - jm);
+    const diff = Math.abs(now.toDate() - jm);
     if (diff < bestDiff) {
       bestDiff = diff;
       best = j;
     }
   }
 
-  const TOLERANCE_MS = 12 * 60 * 60 * 1000;
+  const TOLERANCE_MS = 12 * 60 * 60 * 1000; // 12 jam
   const jadwal = bestDiff <= TOLERANCE_MS ? best : null;
 
   if (!jadwal) {
@@ -131,7 +136,7 @@ async function handleAbsensi(uid, mac) {
 
   // cek apakah sudah absen
   const exist = await prisma.absensi.findFirst({
-    where: { siswa_id: siswa.id, jadwal_id: jadwal.id }
+    where: { siswa_id: siswa.id, jadwal_id: jadwal.id },
   });
 
   if (exist) {
@@ -142,16 +147,16 @@ async function handleAbsensi(uid, mac) {
 
   // tentukan status absensi
   const jamMasukDate = parseTimeToDate(now, jadwal.jam_masuk);
-  const status = now <= jamMasukDate ? "TEPAT_WAKTU" : "TERLAMBAT";
+  const status = now.isBefore(jamMasukDate) ? "TEPAT_WAKTU" : "TERLAMBAT";
 
   // simpan absensi
   await prisma.absensi.create({
     data: {
-      waktu_absensi: now,
+      waktu_absensi: now.toDate(),
       status,
       siswa_id: siswa.id,
-      jadwal_id: jadwal.id
-    }
+      jadwal_id: jadwal.id,
+    },
   });
 
   const successMsg = `Selamat Datang, ${siswa.nama} (${status})`;
@@ -162,7 +167,7 @@ async function handleAbsensi(uid, mac) {
     uid,
     siswa: { id: siswa.id, nama: siswa.nama, no_induk: siswa.no_induk },
     jadwalId: jadwal.id,
-    status
+    status,
   });
 }
 
@@ -175,5 +180,5 @@ export default {
     REGISTER_MODE = state;
     console.log(`[MODE] REGISTER_MODE = ${REGISTER_MODE}`);
   },
-  getRegisterMode: () => REGISTER_MODE
+  getRegisterMode: () => REGISTER_MODE,
 };
