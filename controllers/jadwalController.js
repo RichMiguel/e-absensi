@@ -62,6 +62,21 @@ export const updateJadwal = async (req, res) => {
 
 export const deleteJadwal = async (req, res) => {
   const { id } = req.params;
-  await prisma.jadwal.delete({ where: { id: Number(id) } });
-  res.redirect("/dashboard/jadwal");
+  
+  try {
+    // Hapus semua absensi yang terkait dengan jadwal ini
+    await prisma.absensi.deleteMany({
+      where: { jadwal_id: Number(id) }
+    });
+    
+    // Baru hapus jadwalnya
+    await prisma.jadwal.delete({ 
+      where: { id: Number(id) } 
+    });
+    
+    res.redirect("/dashboard/jadwal");
+  } catch (error) {
+    console.error("Error deleting jadwal:", error);
+    res.status(500).send("Gagal menghapus jadwal");
+  }
 };
