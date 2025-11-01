@@ -21,7 +21,7 @@ export const createJadwal = async (req, res) => {
     data: {
       nama,
       hari,
-      tanggal: new Date(tanggal),
+      tanggal: new Date(tanggal).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }),
       jam_masuk,
     },
   });
