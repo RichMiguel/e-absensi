@@ -27,7 +27,7 @@
                 <td class="px-4 py-2 text-center"><%= i + 1 %></td>
                 <td class="px-4 py-2"><%= a.siswa.no_induk %></td>
                 <td class="px-4 py-2"><%= a.siswa.nama %></td>
-                <td class="px-4 py-2"><%= new Date(a.waktu_absensi).toLocaleTimeString() %></td>
+                <td class="px-4 py-2"><%= new Date(a.waktu_absensi).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) %></td>
                 <td class="px-4 py-2 <%= a.status === 'TERLAMBAT' ? 'text-red-500' : 'text-green-600' %> font-semibold">
                   <%= a.status %>
                 </td>
@@ -56,7 +56,7 @@
             <div class="space-y-1">
               <p class="text-sm"><span class="font-semibold">NIS:</span> <%= a.siswa.no_induk %></p>
               <p class="text-sm"><span class="font-semibold">Nama:</span> <%= a.siswa.nama %></p>
-              <p class="text-sm"><span class="font-semibold">Waktu:</span> <%= new Date(a.waktu_absensi).toLocaleTimeString() %></p>
+              <p class="text-sm"><span class="font-semibold">Waktu:</span> <%= new Date(a.waktu_absensi).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) %></p>
             </div>
           </div>
         <% }) %>
