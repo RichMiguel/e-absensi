@@ -88,7 +88,7 @@ async function handleAbsensi(uid, mac) {
   }
 
   // cari jadwal hari ini
-  const now = new Date();
+  const now = new Date(a.waktu_absensi).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
   const start = normalizeDate(now);
   const end = dayjs(start).endOf("day").toDate();
 
