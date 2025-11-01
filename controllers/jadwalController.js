@@ -1,5 +1,12 @@
 import prisma from "../config/prismaClient.js";
 
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone.js';
+import utc from 'dayjs/plugin/utc.js';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 export const getAllJadwal = async (req, res) => {
   const jadwal = await prisma.jadwal.findMany({ orderBy: { tanggal: "asc" } });
   res.render("dashboard", {
@@ -16,15 +23,20 @@ export const getAddJadwalForm = (req, res) => {
 };
 
 export const createJadwal = async (req, res) => {
-  const { nama, hari, tanggal, jam_masuk, jam_pulang } = req.body;
+  const { nama, hari, tanggal, jam_masuk } = req.body;
+  
+  // Set tanggal dengan timezone Asia/Jakarta
+  const tanggalObj = dayjs.tz(tanggal, 'Asia/Jakarta').toDate();
+  
   await prisma.jadwal.create({
     data: {
       nama,
       hari,
-      tanggal: new Date(tanggal).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }),
+      tanggal: tanggalObj,
       jam_masuk,
     },
   });
+  
   res.redirect("/dashboard/jadwal");
 };
 
