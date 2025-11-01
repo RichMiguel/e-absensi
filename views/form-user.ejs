@@ -1,0 +1,28 @@
+<%- include('partials/navbar') %>
+
+<div class="min-h-screen w-auto bg-slate-200 pt-24 px-16 flex justify-center">
+  <div class="bg-white w-full h-full max-w-lg rounded-lg shadow-md p-6">
+    <h1 class="text-2xl font-bold mb-6 text-center">Tambah User</h1>
+
+    <form action="/dashboard/user/add" method="post" class="space-y-4">
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Username</label>
+        <input type="text" name="username" required
+          class="border rounded-lg w-full px-3 py-2 focus:ring focus:ring-blue-200">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Password</label>
+        <input type="password" name="password" required
+          class="border rounded-lg w-full px-3 py-2 focus:ring focus:ring-blue-200">
+      </div>
+
+      <div class="flex justify-end">
+        <button type="submit"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+          Simpan
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
