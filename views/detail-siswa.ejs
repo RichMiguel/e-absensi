@@ -1,37 +1,66 @@
 <%- include('partials/navbar') %>
 
-    <div class="min-h-screen w-auto bg-slate-200 pt-24 px-16">
-        <div class="bg-white w-full rounded-lg shadow-md p-6">
-            <h1 class="text-2xl font-bold mb-4">Detail Siswa</h1>
-            <div class="bg-gray-100 p-4 rounded">
-                <p><strong>No Induk:</strong>
-                    <%= siswa.no_induk %>
-                </p>
-                <p><strong>Nama:</strong>
-                    <%= siswa.nama %>
-                </p>
-                <p><strong>Tempat Lahir:</strong>
-                    <%= siswa.tempat_lahir %>
-                </p>
-                <p><strong>Tanggal Lahir:</strong>
-                    <%= siswa.tanggal_lahir ? siswa.tanggal_lahir.toISOString().slice(0,10) : "-" %>
-                </p>
-                <p><strong>Kelas:</strong>
-                    <%= siswa.kelas %>
-                </p>
-                <p><strong>RFID UID:</strong>
-                    <%= siswa.rfid_uid %>
-                </p>
-                <p><strong>Dibuat:</strong>
-                    <%= siswa.createdAt.toLocaleString() %>
-                </p>
-                <p><strong>Update Terakhir:</strong>
-                    <%= siswa.updatedAt.toLocaleString() %>
-                </p>
-            </div>
-            <div class="mt-4">
-                <a href="/dashboard/siswa/<%= siswa.id %>/edit" class="bg-yellow-500 text-white px-3 py-1 rounded">Edit</a>
-                <a href="/dashboard/siswa" class="ml-2 text-gray-600">Kembali</a>
+<div class="min-h-screen w-full bg-slate-200 pt-24 px-4 sm:px-6 md:px-8 lg:px-16">
+    <div class="bg-white w-full rounded-lg shadow-md p-4 sm:p-6">
+        <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Detail Siswa</h1>
+        
+        <div class="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+            <!-- Info Grid -->
+            <div class="divide-y divide-gray-200">
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-semibold text-gray-600">No Induk</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= siswa.no_induk %></dd>
+                </div>
+                
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-white">
+                    <dt class="text-sm font-semibold text-gray-600">Nama</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= siswa.nama %></dd>
+                </div>
+                
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-semibold text-gray-600">Tempat Lahir</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= siswa.tempat_lahir %></dd>
+                </div>
+                
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-white">
+                    <dt class="text-sm font-semibold text-gray-600">Tanggal Lahir</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <%= siswa.tanggal_lahir ? siswa.tanggal_lahir.toISOString().slice(0,10) : "-" %>
+                    </dd>
+                </div>
+                
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-semibold text-gray-600">Kelas</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= siswa.kelas %></dd>
+                </div>
+                
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-white">
+                    <dt class="text-sm font-semibold text-gray-600">RFID UID</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 font-mono"><%= siswa.rfid_uid %></dd>
+                </div>
+                
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-semibold text-gray-600">Dibuat</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= siswa.createdAt.toLocaleString('id-ID') %></dd>
+                </div>
+                
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-white">
+                    <dt class="text-sm font-semibold text-gray-600">Update Terakhir</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= siswa.updatedAt.toLocaleString('id-ID') %></dd>
+                </div>
             </div>
         </div>
+        
+        <!-- Action Buttons -->
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <a href="/dashboard/siswa/<%= siswa.id %>/edit" 
+               class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-center transition text-sm sm:text-base">
+                Edit
+            </a>
+            <a href="/dashboard/siswa" 
+               class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center transition text-sm sm:text-base">
+                Kembali
+            </a>
+        </div>
     </div>
+</div>

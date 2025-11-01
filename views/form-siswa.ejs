@@ -1,66 +1,123 @@
 <%- include('partials/navbar') %>
 
-  <div class="min-h-screen w-auto bg-slate-200 pt-24 px-16">
-    <div class="bg-white w-full rounded-lg shadow-md p-6">
-      <h1 class="text-2xl font-bold mb-4">
-        <%= siswa ? "Edit Siswa" : "Tambah Siswa" %>
-      </h1>
+<div class="min-h-screen w-full bg-slate-200 pt-24 px-4 sm:px-6 md:px-8 lg:px-16">
+  <div class="bg-white w-full max-w-2xl mx-auto rounded-lg shadow-md p-4 sm:p-6">
+    <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+      <%= siswa ? "Edit Siswa" : "Tambah Siswa" %>
+    </h1>
 
-      <form action="/dashboard/<%= action %>" method="POST" class="space-y-4">
+    <form action="/dashboard/<%= action %>" method="POST" class="space-y-4 sm:space-y-5">
+      <!-- No Induk (NIS) -->
+      <div>
+        <label class="block font-semibold text-sm sm:text-base mb-2">No Induk (NIS)</label>
+        <input 
+          type="text" 
+          name="no_induk" 
+          value="<%= siswa ? siswa.no_induk : '' %>" 
+          required
+          placeholder="Masukkan NIS siswa"
+          class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        >
+      </div>
+
+      <!-- Nama -->
+      <div>
+        <label class="block font-semibold text-sm sm:text-base mb-2">Nama</label>
+        <input 
+          type="text" 
+          name="nama" 
+          value="<%= siswa ? siswa.nama : '' %>" 
+          required
+          placeholder="Nama lengkap siswa"
+          class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        >
+      </div>
+
+      <!-- Tempat Lahir & Tanggal Lahir - Grid di Desktop -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Tempat Lahir -->
         <div>
-          <label class="block font-semibold">No Induk (NIS)</label>
-          <input type="text" name="no_induk" value="<%= siswa ? siswa.no_induk : "" %>" required
-            class="border rounded w-full p-2">
+          <label class="block font-semibold text-sm sm:text-base mb-2">Tempat Lahir</label>
+          <input 
+            type="text" 
+            name="tempat_lahir" 
+            value="<%= siswa ? siswa.tempat_lahir : '' %>"
+            placeholder="Kota kelahiran"
+            class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          >
         </div>
 
+        <!-- Tanggal Lahir -->
         <div>
-          <label class="block font-semibold">Nama</label>
-          <input type="text" name="nama" value="<%= siswa ? siswa.nama : "" %>" required
-            class="border rounded w-full p-2">
+          <label class="block font-semibold text-sm sm:text-base mb-2">Tanggal Lahir</label>
+          <input 
+            type="date" 
+            name="tanggal_lahir"
+            value="<%= siswa && siswa.tanggal_lahir ? siswa.tanggal_lahir.toISOString().slice(0,10) : '' %>"
+            class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          >
         </div>
+      </div>
 
-        <div>
-          <label class="block font-semibold">Tempat Lahir</label>
-          <input type="text" name="tempat_lahir" value="<%= siswa ? siswa.tempat_lahir : "" %>"
-            class="border rounded w-full p-2">
+      <!-- Kelas -->
+      <div>
+        <label class="block font-semibold text-sm sm:text-base mb-2">Kelas</label>
+        <input 
+          type="text" 
+          name="kelas" 
+          value="<%= siswa ? siswa.kelas : '' %>" 
+          required
+          placeholder="Contoh: X IPA 1"
+          class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        >
+      </div>
+
+      <!-- RFID UID -->
+      <div>
+        <label class="block font-semibold text-sm sm:text-base mb-2">RFID UID</label>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input 
+            id="rfid_uid" 
+            type="text" 
+            name="rfid_uid" 
+            value="<%= siswa ? siswa.rfid_uid : '' %>" 
+            required
+            placeholder="UID kartu RFID"
+            class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          >
+          <% if (!siswa) { %>
+            <button 
+              type="button" 
+              id="scan-btn" 
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition font-medium text-sm sm:text-base whitespace-nowrap"
+            >
+              Scan
+            </button>
+          <% } %>
         </div>
+        <p id="scan-status" class="text-xs sm:text-sm text-gray-500 mt-2"></p>
+      </div>
 
-        <div>
-          <label class="block font-semibold">Tanggal Lahir</label>
-          <input type="date" name="tanggal_lahir"
-            value="<%= siswa && siswa.tanggal_lahir ? siswa.tanggal_lahir.toISOString().slice(0,10) : "" %>"
-            class="border rounded w-full p-2">
-        </div>
-
-        <div>
-          <label class="block font-semibold">Kelas</label>
-          <input type="text" name="kelas" value="<%= siswa ? siswa.kelas : "" %>" required
-            class="border rounded w-full p-2">
-        </div>
-
-        <div>
-          <label class="block font-semibold">RFID UID</label>
-          <div class="flex gap-2">
-            <input id="rfid_uid" type="text" name="rfid_uid" value="<%= siswa ? siswa.rfid_uid : "" %>" required
-              class="border rounded w-full p-2">
-            <% if (!siswa) { %>
-              <button type="button" id="scan-btn" class="bg-blue-600 text-white px-3 rounded">
-                Scan
-              </button>
-              <% } %>
-          </div>
-          <p id="scan-status" class="text-sm text-gray-500 mt-1"></p>
-        </div>
-
-        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+        <button 
+          type="submit" 
+          class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 sm:py-2.5 rounded-lg transition font-medium text-sm sm:text-base"
+        >
           <%= siswa ? "Update" : "Simpan" %>
         </button>
-        <a href="/dashboard/siswa" class="ml-2 text-gray-600">Batal</a>
-      </form>
-    </div>
+        <a 
+          href="/dashboard/siswa" 
+          class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 sm:py-2.5 rounded-lg transition text-center font-medium text-sm sm:text-base"
+        >
+          Batal
+        </a>
+      </div>
+    </form>
   </div>
+</div>
 
-  <script type="">
+<script type="">
   const scanBtn = document.getElementById("scan-btn");
   const rfidInput = document.getElementById("rfid_uid");
   const statusText = document.getElementById("scan-status");

@@ -1,66 +1,102 @@
 <%- include('partials/navbar') %>
 
-    <div class="min-h-screen w-auto bg-slate-200 pt-24 px-16">
-        <div class="bg-white w-full rounded-lg shadow-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold">DATA SISWA</h1>
-                <a href="/dashboard/siswa/form"
-                    class="text-lg text-white bg-green-600 px-4 py-1 rounded-lg hover:bg-green-800">Tambah</a>
-            </div>
+<div class="min-h-screen w-full bg-slate-200 pt-24 px-4 sm:px-6 md:px-8 lg:px-16">
+    <div class="bg-white w-full rounded-lg shadow-md p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+            <h1 class="text-xl sm:text-2xl font-bold">DATA SISWA</h1>
+            <a href="/dashboard/siswa/form"
+                class="text-sm sm:text-base text-white bg-green-600 px-4 py-2 rounded-lg hover:bg-green-800 w-full sm:w-auto text-center">
+                Tambah
+            </a>
+        </div>
 
-            <!-- Filter dan Search -->
-            <div class="flex flex-col md:flex-row gap-4 mb-4">
-                <select class="border rounded-lg px-3 py-2 w-full md:w-48">
-                    <option value="">Semua Kelas</option>
-                    <option value="X IPA 1">X IPA 1</option>
-                    <option value="X IPA 2">X IPA 2</option>
-                    <option value="XI IPA 1">XI IPA 1</option>
-                </select>
+        <!-- Filter dan Search -->
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4">
+            <select class="border rounded-lg px-3 py-2 w-full sm:w-48">
+                <option value="">Semua Kelas</option>
+                <option value="X IPA 1">X IPA 1</option>
+                <option value="X IPA 2">X IPA 2</option>
+                <option value="XI IPA 1">XI IPA 1</option>
+            </select>
 
-                <input type="text" placeholder="Cari nama atau NIS..." class="border rounded-lg px-3 py-2 flex-1">
-            </div>
+            <input type="text" placeholder="Cari nama atau NIS..." class="border rounded-lg px-3 py-2 flex-1">
+        </div>
 
-            <!-- Table -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full border border-gray-200 rounded-lg">
-                    <thead class="bg-slate-100">
-                        <tr>
-                            <th class="px-4 py-2 border-b text-left">No</th>
-                            <th class="px-4 py-2 border-b text-left">NIS</th>
-                            <th class="px-4 py-2 border-b text-left">Nama</th>
-                            <th class="px-4 py-2 border-b text-left">Kelas</th>
-                            <th class="px-4 py-2 border-b text-left">Aksi</th>
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+            <table class="min-w-full border border-gray-200 rounded-lg">
+                <thead class="bg-slate-100">
+                    <tr>
+                        <th class="px-4 py-2 border-b text-left">No</th>
+                        <th class="px-4 py-2 border-b text-left">NIS</th>
+                        <th class="px-4 py-2 border-b text-left">Nama</th>
+                        <th class="px-4 py-2 border-b text-left">Kelas</th>
+                        <th class="px-4 py-2 border-b text-left">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    <% siswa.forEach((s, i)=> { %>
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-4 py-2"><%= i+1 %></td>
+                            <td class="px-4 py-2"><%= s.no_induk %></td>
+                            <td class="px-4 py-2"><%= s.nama %></td>
+                            <td class="px-4 py-2"><%= s.kelas %></td>
+                            <td class="px-4 py-2 space-x-2">
+                                <a href="/dashboard/siswa/<%= s.id %>"
+                                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">Detail</a>
+                                <a href="/dashboard/siswa/<%= s.id %>/edit"
+                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg text-sm">Edit</a>
+                                <form action="/dashboard/siswa/<%= s.id %>/delete" method="post" class="inline">
+                                    <button type="submit"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm">Hapus</button>
+                                </form>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody class="divide-y">
-                        <% siswa.forEach((s, i)=> { %>
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-4 py-2">
-                                    <%= i+1 %>
-                                </td>
-                                <td class="px-4 py-2">
-                                    <%= s.no_induk %>
-                                </td>
-                                <td class="px-4 py-2">
-                                    <%= s.nama %>
-                                </td>
-                                <td class="px-4 py-2">
-                                    <%= s.kelas %>
-                                </td>
-                                <td class="px-4 py-2 space-x-2">
-                                    <a href="/dashboard/siswa/<%= s.id %>"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">Detail</a>
-                                    <a href="/dashboard/siswa/<%= s.id %>/edit"
-                                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg text-sm">Edit</a>
-                                    <form action="/dashboard/siswa/<%= s.id %>/delete" method="post" class="inline">
-                                        <button type="submit"
-                                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="block md:hidden space-y-3">
+            <% if(siswa.length > 0) { %>
+                <% siswa.forEach((s, i)=> { %>
+                    <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-200">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <span class="text-xs text-gray-500">No. <%= i+1 %></span>
+                                <p class="font-bold text-base mt-1"><%= s.nama %></p>
+                                <p class="text-sm text-gray-600 mt-1">NIS: <%= s.no_induk %></p>
+                                <p class="text-sm text-gray-600">Kelas: <%= s.kelas %></p>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col gap-2 mt-3">
+                            <a href="/dashboard/siswa/<%= s.id %>"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm text-center">
+                                Detail
+                            </a>
+                            <div class="flex gap-2">
+                                <a href="/dashboard/siswa/<%= s.id %>/edit"
+                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm flex-1 text-center">
+                                    Edit
+                                </a>
+                                <form action="/dashboard/siswa/<%= s.id %>/delete" method="post" class="flex-1">
+                                    <button type="submit"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm w-full">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                    Tidak ada data siswa
+                </div>
+            <% } %>
         </div>
     </div>
+</div>

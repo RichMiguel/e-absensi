@@ -1,42 +1,70 @@
 <%- include('partials/navbar') %>
 
-<div class="min-h-screen w-auto bg-slate-200 pt-24 px-16">
-  <div class="bg-white w-full rounded-lg shadow-md p-6">
-    <h1 class="text-2xl font-bold mb-4">
+<div class="min-h-screen w-full bg-slate-200 pt-24 px-4 sm:px-6 md:px-8 lg:px-16">
+  <div class="bg-white w-full rounded-lg shadow-md p-4 sm:p-6">
+    <h1 class="text-xl sm:text-2xl font-bold mb-4">
       Log Absensi - <%= jadwal.nama %> (<%= new Date(jadwal.tanggal).toLocaleDateString() %>)
     </h1>
 
-    <a href="/dashboard/jadwal" class="text-blue-600 mb-4 inline-block">&larr; Kembali ke Jadwal</a>
+    <a href="/dashboard/jadwal" class="text-blue-600 mb-4 inline-block hover:underline">&larr; Kembali ke Jadwal</a>
 
-    <table class="table-auto w-full mt-3">
-      <thead class="bg-gray-200">
-        <tr>
-          <th class="px-4 py-2">No</th>
-          <th class="px-4 py-2">NIS</th>
-          <th class="px-4 py-2">Nama</th>
-          <th class="px-4 py-2">Waktu Absensi</th>
-          <th class="px-4 py-2">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (jadwal.absensi.length > 0) { %>
-          <% jadwal.absensi.forEach((a, i) => { %>
-            <tr>
-              <td class="px-4 py-2"><%= i + 1 %></td>
-              <td class="px-4 py-2"><%= a.siswa.no_induk %></td>
-              <td class="px-4 py-2"><%= a.siswa.nama %></td>
-              <td class="px-4 py-2"><%= new Date(a.waktu_absensi).toLocaleTimeString() %></td>
-              <td class="px-4 py-2 <%= a.status === 'TERLAMBAT' ? 'text-red-500' : 'text-green-600' %>">
-                <%= a.status %>
-              </td>
-            </tr>
-          <% }) %>
-        <% } else { %>
+    <!-- Desktop Table View -->
+    <div class="hidden md:block overflow-x-auto mt-3">
+      <table class="table-auto w-full">
+        <thead class="bg-gray-200">
           <tr>
-            <td colspan="5" class="text-center p-3 text-gray-500">Belum ada absensi pada jadwal ini</td>
+            <th class="px-4 py-2">No</th>
+            <th class="px-4 py-2">NIS</th>
+            <th class="px-4 py-2">Nama</th>
+            <th class="px-4 py-2">Waktu Absensi</th>
+            <th class="px-4 py-2">Status</th>
           </tr>
-        <% } %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% if (jadwal.absensi.length > 0) { %>
+            <% jadwal.absensi.forEach((a, i) => { %>
+              <tr class="border-b hover:bg-gray-50">
+                <td class="px-4 py-2 text-center"><%= i + 1 %></td>
+                <td class="px-4 py-2"><%= a.siswa.no_induk %></td>
+                <td class="px-4 py-2"><%= a.siswa.nama %></td>
+                <td class="px-4 py-2"><%= new Date(a.waktu_absensi).toLocaleTimeString() %></td>
+                <td class="px-4 py-2 <%= a.status === 'TERLAMBAT' ? 'text-red-500' : 'text-green-600' %> font-semibold">
+                  <%= a.status %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="5" class="text-center p-3 text-gray-500">Belum ada absensi pada jadwal ini</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="block md:hidden mt-3 space-y-3">
+      <% if (jadwal.absensi.length > 0) { %>
+        <% jadwal.absensi.forEach((a, i) => { %>
+          <div class="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-200">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-sm font-semibold text-gray-600">#<%= i + 1 %></span>
+              <span class="px-2 py-1 rounded text-xs font-semibold <%= a.status === 'TERLAMBAT' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' %>">
+                <%= a.status %>
+              </span>
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm"><span class="font-semibold">NIS:</span> <%= a.siswa.no_induk %></p>
+              <p class="text-sm"><span class="font-semibold">Nama:</span> <%= a.siswa.nama %></p>
+              <p class="text-sm"><span class="font-semibold">Waktu:</span> <%= new Date(a.waktu_absensi).toLocaleTimeString() %></p>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="text-center p-6 text-gray-500 bg-gray-50 rounded-lg">
+          Belum ada absensi pada jadwal ini
+        </div>
+      <% } %>
+    </div>
   </div>
 </div>

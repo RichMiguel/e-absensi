@@ -1,30 +1,37 @@
 <%- include('partials/navbar') %>
 
-<div class="min-h-screen w-auto bg-slate-200 pt-24 px-16">
-  <div class="bg-white w-full rounded-lg shadow-md p-6">
-    <h1 class="text-2xl font-bold mb-4">
+<div class="min-h-screen w-full bg-slate-200 pt-24 px-4 sm:px-6 md:px-8 lg:px-16">
+  <div class="bg-white w-full max-w-2xl mx-auto rounded-lg shadow-md p-4 sm:p-6">
+    <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
       <%= jadwal ? "Edit Jadwal" : "Tambah Jadwal" %>
     </h1>
 
     <form 
       action="<%= jadwal ? `/dashboard/jadwal/edit/${jadwal.id}` : '/dashboard/jadwal/add' %>" 
       method="POST" 
-      class="space-y-4"
+      class="space-y-4 sm:space-y-5"
     >
+      <!-- Nama Jadwal -->
       <div>
-        <label class="block font-semibold">Nama Jadwal</label>
+        <label class="block font-semibold text-sm sm:text-base mb-2">Nama Jadwal</label>
         <input 
           type="text" 
           name="nama" 
-          class="border rounded w-full p-2" 
+          class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" 
+          placeholder="Contoh: Upacara Bendera"
           required
           value="<%= jadwal ? jadwal.nama : '' %>"
         >
       </div>
 
+      <!-- Hari -->
       <div>
-        <label class="block font-semibold">Hari</label>
-        <select name="hari" class="border rounded w-full p-2" required>
+        <label class="block font-semibold text-sm sm:text-base mb-2">Hari</label>
+        <select 
+          name="hari" 
+          class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" 
+          required
+        >
           <% const hariList = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU", "MINGGU"]; %>
           <% hariList.forEach(h => { %>
             <option 
@@ -36,33 +43,47 @@
         </select>
       </div>
 
-      <div>
-        <label class="block font-semibold">Tanggal</label>
-        <input 
-          type="date" 
-          name="tanggal" 
-          class="border rounded w-full p-2" 
-          required
-          value="<%= jadwal ? jadwal.tanggal.toISOString().split('T')[0] : '' %>"
-        >
+      <!-- Tanggal & Jam Masuk - Grid di Desktop -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Tanggal -->
+        <div>
+          <label class="block font-semibold text-sm sm:text-base mb-2">Tanggal</label>
+          <input 
+            type="date" 
+            name="tanggal" 
+            class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" 
+            required
+            value="<%= jadwal ? jadwal.tanggal.toISOString().split('T')[0] : '' %>"
+          >
+        </div>
+
+        <!-- Jam Masuk -->
+        <div>
+          <label class="block font-semibold text-sm sm:text-base mb-2">Jam Masuk</label>
+          <input 
+            type="time" 
+            name="jam_masuk" 
+            class="border border-gray-300 rounded-lg w-full p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" 
+            required
+            value="<%= jadwal ? jadwal.jam_masuk : '' %>"
+          >
+        </div>
       </div>
 
-      <div>
-        <label class="block font-semibold">Jam Masuk</label>
-        <input 
-          type="time" 
-          name="jam_masuk" 
-          class="border rounded w-full p-2" 
-          required
-          value="<%= jadwal ? jadwal.jam_masuk : '' %>"
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+        <button 
+          type="submit" 
+          class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 sm:py-2.5 rounded-lg transition font-medium text-sm sm:text-base"
         >
-      </div>
-
-      <div class="flex items-center gap-3">
-        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">
           <%= jadwal ? "Perbarui" : "Simpan" %>
         </button>
-        <a href="/dashboard/jadwal" class="text-gray-600">Batal</a>
+        <a 
+          href="/dashboard/jadwal" 
+          class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 sm:py-2.5 rounded-lg transition text-center font-medium text-sm sm:text-base"
+        >
+          Batal
+        </a>
       </div>
     </form>
   </div>
